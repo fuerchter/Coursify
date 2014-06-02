@@ -21,19 +21,24 @@ import android.os.Build;
 
 public class MainActivity extends ListActivity {
 	private ArrayList<Course> courses=new ArrayList<Course>();
+	private int lastCourse=0;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
         Course einfinf=new Course("Einfinf");
+        
         einfinf.addRating(5);
         einfinf.addRating(1);
+        einfinf.comments.add(new Comment("Ich", "asdf"));
+        einfinf.comments.add(new Comment("Du", "blablabla"));
+        
         courses.add(einfinf);
         courses.add(new Course("Mathe"));
         courses.add(new Course("Algogeo"));
         
-        ArrayList<String> courseNames=new ArrayList<String>(); //Means no two courses can have the same name
+        ArrayList<String> courseNames=new ArrayList<String>(); //Means no two courses can have the same name?
         for(Course course : courses)
         {
         	courseNames.add(course.getName());
@@ -44,11 +49,15 @@ public class MainActivity extends ListActivity {
 
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
-      /*String item = (String) getListAdapter().getItem(position);
-      Toast.makeText(this, item + " selected", Toast.LENGTH_LONG).show();*/
-      Intent intent = new Intent(this, CourseActivity.class);
-      intent.putExtra("Course", courses.get(position));
-      startActivity(intent);
+    	//Once item is clicked on, give the chosen course to the CourseActivity and start it
+    	Intent intent = new Intent(this, CourseActivity.class);
+    	intent.putExtra("Course", courses.get(position));
+    	lastCourse=position;
+    	startActivityForResult(intent, 1);
+    }
+    
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    	courses.set(lastCourse, (Course)data.getSerializableExtra("Course"));
     }
 
     @Override

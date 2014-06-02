@@ -1,6 +1,14 @@
 package com.example.coursify;
 
-public class Comment {
-	private String author;
-	private String text;
+import java.io.Serializable;
+
+public class Comment implements Serializable {
+	String author;
+	String text;
+	
+	Comment(String author, String text)
+	{
+		this.author=author;
+		this.text=text;
+	}
 }

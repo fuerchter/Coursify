@@ -3,6 +3,8 @@ package com.example.coursify;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
+import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -12,9 +14,12 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.RatingBar.OnRatingBarChangeListener;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.os.Build;
 
@@ -25,13 +30,19 @@ public class CourseActivity extends ActionBarActivity {
 	TextView rating;
 	private RatingBar ratingBar;
 	
+	private EditText authorEdit;
+	private EditText textEdit;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		//Has to give course back once destroyed?
+		//Creating the look of CourseActivity
+		//Ratings
 		course=(Course)getIntent().getSerializableExtra("Course");
 		setTitle(course.getName());
+		
+		ScrollView view=new ScrollView(this);
 		
 		LinearLayout layout=new LinearLayout(this);
 		layout.setOrientation(LinearLayout.VERTICAL);
@@ -46,9 +57,9 @@ public class CourseActivity extends ActionBarActivity {
 		ratingBar.setStepSize(1);
 		layout.addView(ratingBar);
 		
-		Button button=new Button(this);
-		button.setText("Add Rating!");
-		button.setOnClickListener(new OnClickListener() {           
+		Button addRating=new Button(this);
+		addRating.setText("Add Rating!");
+		addRating.setOnClickListener(new OnClickListener() {           
 
 			  @Override
 			  public void onClick(View v) 
@@ -57,20 +68,49 @@ public class CourseActivity extends ActionBarActivity {
 				  rating.setText(getRatingText());
 			  }    
 		});
-		layout.addView(button);
+		layout.addView(addRating);
 		
-		/*ratingBar.setOnRatingBarChangeListener(new OnRatingBarChangeListener() {
-			public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-				txtRatingValue.setText(String.valueOf(rating));
-			}
-		})*/;
+		//Comments
+		for(Comment comment : course.comments)
+		{
+			TextView authorText=new TextView(this);
+			authorText.setText(comment.author);
+			authorText.setTypeface(Typeface.create("", Typeface.BOLD));
+			layout.addView(authorText);
+			
+			TextView commentText=new TextView(this);
+			commentText.setText(comment.text);
+			layout.addView(commentText);
+		}
 		
-		setContentView(layout);
+		authorEdit=new EditText(this);
+		authorEdit.setHint("Author");
+		layout.addView(authorEdit);
+		
+		textEdit=new EditText(this);
+		textEdit.setHint("Comment");
+		layout.addView(textEdit);
+		
+		Button addComment=new Button(this);
+		addComment.setText("Add Comment!");
+		addComment.setOnClickListener(new OnClickListener() {           
 
-		/*if (savedInstanceState == null) {
-			getSupportFragmentManager().beginTransaction()
-					.add(R.id.container, new PlaceholderFragment()).commit();
-		}*/
+			  @Override
+			  public void onClick(View v) 
+			  {
+				  course.comments.add(new Comment(authorEdit.getText().toString(), textEdit.getText().toString()));
+			  }    
+		});
+		layout.addView(addComment);
+		
+		view.addView(layout);
+		
+		setContentView(view);
+
+		//Return course once activity is done
+		Intent intent = new Intent();
+		intent.putExtra("Course", course);
+		setResult(RESULT_OK, intent);
 	}
 
 	private String getRatingText()

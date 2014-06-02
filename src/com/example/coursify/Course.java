@@ -6,7 +6,8 @@ import java.util.ArrayList;
 public class Course implements Serializable {
 	private String name;
 	private ArrayList<Integer> ratings=new ArrayList<Integer>();
-	private ArrayList<Comment> comments=new ArrayList<Comment>();
+	
+	ArrayList<Comment> comments=new ArrayList<Comment>();
 	
 	Course(String name)
 	{
