@@ -1,30 +1,52 @@
 package com.example.coursify;
 
+import java.util.ArrayList;
+
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
+import android.app.ListActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.Toast;
 import android.os.Build;
 
-public class MainActivity extends ActionBarActivity {
-
+public class MainActivity extends ListActivity {
+	ArrayList<Course> courses=new ArrayList<Course>();
+	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
-                    .commit();
+        
+        courses.add(new Course("Einfinf"));
+        courses.add(new Course("Mathe"));
+        courses.add(new Course("Algogeo"));
+        
+        ArrayList<String> courseNames=new ArrayList<String>(); //Means no two courses can have the same name
+        for(Course course : courses)
+        {
+        	courseNames.add(course.getName());
         }
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, courseNames.toArray(new String[courseNames.size()]));
+        setListAdapter(adapter);
     }
 
+    @Override
+    protected void onListItemClick(ListView l, View v, int position, long id) {
+      /*String item = (String) getListAdapter().getItem(position);
+      Toast.makeText(this, item + " selected", Toast.LENGTH_LONG).show();*/
+      Intent intent = new Intent(this, CourseActivity.class);
+      intent.putExtra("Course", courses.get(position));
+      startActivity(intent);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
