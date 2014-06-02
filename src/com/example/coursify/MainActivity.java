@@ -20,13 +20,16 @@ import android.widget.Toast;
 import android.os.Build;
 
 public class MainActivity extends ListActivity {
-	ArrayList<Course> courses=new ArrayList<Course>();
+	private ArrayList<Course> courses=new ArrayList<Course>();
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        courses.add(new Course("Einfinf"));
+        Course einfinf=new Course("Einfinf");
+        einfinf.addRating(5);
+        einfinf.addRating(1);
+        courses.add(einfinf);
         courses.add(new Course("Mathe"));
         courses.add(new Course("Algogeo"));
         

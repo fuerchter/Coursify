@@ -1,6 +1,6 @@
 package com.example.coursify;
 
 public class Comment {
-	String author;
-	String text;
+	private String author;
+	private String text;
 }

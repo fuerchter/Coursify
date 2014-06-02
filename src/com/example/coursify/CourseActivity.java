@@ -8,28 +8,64 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
+import android.widget.RatingBar.OnRatingBarChangeListener;
 import android.widget.TextView;
 import android.os.Build;
 
 public class CourseActivity extends ActionBarActivity {
 
+	private Course course;
+	
+	TextView rating;
+	private RatingBar ratingBar;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
 		//Has to give course back once destroyed?
-		Course course=(Course)getIntent().getSerializableExtra("Course");
+		course=(Course)getIntent().getSerializableExtra("Course");
 		setTitle(course.getName());
 		
-		/*LinearLayout layout=new LinearLayout(this);
+		LinearLayout layout=new LinearLayout(this);
+		layout.setOrientation(LinearLayout.VERTICAL);
 		
-		TextView courseName=new TextView(this);
-		courseName.setText(course.getName());
-		layout.addView(courseName);
+		rating=new TextView(this);
+		rating.setText(getRatingText());
+		layout.addView(rating);
 		
-		setContentView(layout);*/
+		ratingBar=new RatingBar(this);
+		ratingBar.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+		ratingBar.setNumStars(5);
+		ratingBar.setStepSize(1);
+		layout.addView(ratingBar);
+		
+		Button button=new Button(this);
+		button.setText("Add Rating!");
+		button.setOnClickListener(new OnClickListener() {           
+
+			  @Override
+			  public void onClick(View v) 
+			  {
+				  course.addRating((int)ratingBar.getRating());
+				  rating.setText(getRatingText());
+			  }    
+		});
+		layout.addView(button);
+		
+		/*ratingBar.setOnRatingBarChangeListener(new OnRatingBarChangeListener() {
+			public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+				txtRatingValue.setText(String.valueOf(rating));
+			}
+		})*/;
+		
+		setContentView(layout);
 
 		/*if (savedInstanceState == null) {
 			getSupportFragmentManager().beginTransaction()
@@ -37,6 +73,11 @@ public class CourseActivity extends ActionBarActivity {
 		}*/
 	}
 
+	private String getRatingText()
+	{
+		return "Rating: " +course.getAverageRating()+ " (" +course.getRatingsCount()+ ")";
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 
