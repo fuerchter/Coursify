@@ -1,10 +1,13 @@
 package com.example.coursify;
 
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -15,17 +18,17 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RatingBar;
-import android.widget.RatingBar.OnRatingBarChangeListener;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.os.Build;
 
 public class CourseActivity extends ActionBarActivity {
 
 	private Course course;
+	
+	private LinearLayout layout;
 	
 	TextView rating;
 	private RatingBar ratingBar;
@@ -33,6 +36,21 @@ public class CourseActivity extends ActionBarActivity {
 	private EditText authorEdit;
 	private EditText textEdit;
 	
+	private String getRatingText()
+	{
+		return "Rating: " +course.getAverageRating()+ " (" +course.getRatingsCount()+ ")";
+	}
+	
+	private void addComment()
+	{
+		course.comments.add(new Comment(authorEdit.getText().toString(), textEdit.getText().toString()));
+		//DESIGN: Add some sweet sweet FrankerZ
+		ImageView fz=new ImageView(this);
+		fz.setImageResource(R.drawable.fz);
+		layout.addView(fz);
+	}
+	
+	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -44,7 +62,7 @@ public class CourseActivity extends ActionBarActivity {
 		
 		ScrollView view=new ScrollView(this);
 		
-		LinearLayout layout=new LinearLayout(this);
+		layout=new LinearLayout(this);
 		layout.setOrientation(LinearLayout.VERTICAL);
 		
 		rating=new TextView(this);
@@ -55,6 +73,8 @@ public class CourseActivity extends ActionBarActivity {
 		ratingBar.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 		ratingBar.setNumStars(5);
 		ratingBar.setStepSize(1);
+		LayerDrawable stars = (LayerDrawable) ratingBar.getProgressDrawable(); //DESIGN: Change ratingBar color
+		stars.getDrawable(2).setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
 		layout.addView(ratingBar);
 		
 		Button addRating=new Button(this);
@@ -98,12 +118,15 @@ public class CourseActivity extends ActionBarActivity {
 			  @Override
 			  public void onClick(View v) 
 			  {
-				  course.comments.add(new Comment(authorEdit.getText().toString(), textEdit.getText().toString()));
+				  addComment();
 			  }    
 		});
 		layout.addView(addComment);
 		
 		view.addView(layout);
+		/*view.setRotation(30);
+        view.setAlpha(0.2f);*/
+		view.setBackgroundColor(Color.YELLOW); //DESIGN: Change background color
 		
 		setContentView(view);
 
@@ -111,11 +134,6 @@ public class CourseActivity extends ActionBarActivity {
 		Intent intent = new Intent();
 		intent.putExtra("Course", course);
 		setResult(RESULT_OK, intent);
-	}
-
-	private String getRatingText()
-	{
-		return "Rating: " +course.getAverageRating()+ " (" +course.getRatingsCount()+ ")";
 	}
 	
 	@Override
